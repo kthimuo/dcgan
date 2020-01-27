@@ -13,6 +13,7 @@ class DCGAN:
         self.n_w5 = 3
 
         self.generator = self.make_generator()
+        self.discriminator = self.make_discriminator()
 
     def make_generator(self):
         generator = tf.keras.Sequential()
@@ -87,6 +88,78 @@ class DCGAN:
                
         return generator
 
+    def make_discriminator(self):
+        discriminator = tf.keras.Sequential()
+        discriminator.add(
+               tf.keras.layers.Conv2D(
+                  filters=self.n_w4,
+                  kernel_size=(5,5),
+                  strides=(2,2),
+                  padding='same'
+                   ) 
+                )
+        discriminator.add(
+                tf.keras.layers.LeakyReLU()
+                )
+        discriminator.add(
+                tf.keras.layers.BatchNormalization()
+                )
+
+
+
+        discriminator.add(
+               tf.keras.layers.Conv2D(
+                  filters=self.n_w3,
+                  kernel_size=(5,5),
+                  strides=(2,2),
+                  padding='same'
+                   ) 
+                )
+        discriminator.add(
+                tf.keras.layers.LeakyReLU()
+                )
+        discriminator.add(
+                tf.keras.layers.BatchNormalization()
+                )
+
+
+        discriminator.add(
+               tf.keras.layers.Conv2D(
+                  filters=self.n_w2,
+                  kernel_size=(5,5),
+                  strides=(2,2),
+                  padding='same'
+                   ) 
+                )
+        discriminator.add(
+                tf.keras.layers.LeakyReLU()
+                )
+        discriminator.add(
+                tf.keras.layers.BatchNormalization()
+                )
+
+
+        discriminator.add(
+               tf.keras.layers.Conv2D(
+                  filters=self.n_w1,
+                  kernel_size=(5,5),
+                  strides=(2,2),
+                  padding='same'
+                   ) 
+                )
+        discriminator.add(
+                tf.keras.layers.LeakyReLU()
+                )
+        discriminator.add(
+                tf.keras.layers.BatchNormalization()
+                )
+        discriminator.add(
+               tf.keras.layers.Flatten() 
+                )
+        discriminator.add(
+               tf.keras.layers.Dense(1) 
+                )
+        return discriminator
 
 if __name__ == '__main__':
     batch_size = 128
@@ -97,7 +170,8 @@ if __name__ == '__main__':
     print(noise.shape)
     dcgan = DCGAN(batch_size, n_noise)
     out = dcgan.generator(noise)
-    print(out.shape)
+    inver = dcgan.discriminator(out)
+    print(inver.shape)
 
 
         
