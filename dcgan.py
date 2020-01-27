@@ -161,21 +161,21 @@ class DCGAN:
                 )
         return discriminator
 
-    @classmethod
-    def discriminator_loss(real_output, fake_output):
+    def discriminator_loss(self,real_output, fake_output):
+        cross_entropy = tf.keras.losses.BinaryCrossentropy(from_logits=True)
         real_loss = cross_entropy(tf.ones_like(real_output), real_output)
         fake_loss = cross_entropy(tf.zeros_like(fake_output), fake_output)
         total_loss = real_loss + fake_loss
         return total_loss
 
-    @classmethod
-    def generator_loss(fake_output):
+    def generator_loss(self,fake_output):
+        cross_entropy = tf.keras.losses.BinaryCrossentropy(from_logits=True)
         return cross_entropy(tf.ones_like(fake_output), fake_output)
 
     def train(self,images,epochs):
-        dis_opt = tf.keras.optimizer.Adam(1e-4)
-        gen_opt = tf.keras.optimizer.Adam(1e-4)
-        for epoch in epochs:
+        dis_opt = tf.keras.optimizers.Adam(1e-4)
+        gen_opt = tf.keras.optimizers.Adam(1e-4)
+        for epoch in range(epochs):
             batch = np.random.choice(dataset.shape[0],self.batch_size)
             batch_images = images[batch]
             noise = np.random.uniform(-1,1,[self.batch_size,100])
@@ -184,10 +184,15 @@ class DCGAN:
             fake_output = self.discriminator(generated_image)
             real_output = self.discriminator(batch_images)
             
-            dis_loss = discriminator_loss(real_output, fake_output)
-            gen_loss = generator_loss(fake_output)
+            dis_loss = self.discriminator_loss(real_output, fake_output)
+            gen_loss = self.generator_loss(fake_output)
 
-            dis_opt.minimize(dis_loss)
+            a = self.discriminator.trainable_variables
+            print(a)
+            break
+#            dis_opt.minimize(dis_loss,])
+#            print('ok')
+#            break
 
 
             
@@ -197,13 +202,27 @@ if __name__ == '__main__':
     n_noise = 100
 
 
-    noise = np.random.uniform(-1,1,(batch_size, 100))
-    print(noise.shape)
+#    noise = np.random.uniform(-1,1,(batch_size, 100))
+#    print(noise.shape)
     dcgan = DCGAN(batch_size, n_noise)
-    out = dcgan.generator(noise)
-    inver = dcgan.discriminator(out)
-    print(inver.shape)
+#    out = dcgan.generator(noise)
+#    inver = dcgan.discriminator(out)
+#    print(inver.shape)
+#
+    dataset = []
+    import sys,os
+    from PIL import Image    
+    dir_name = 'apples'
+    for name in os.listdir(dir_name):
+        if not name.startswith('.'):
+            path = dir_name + '/' + name
+            img = Image.open(path)
+            img = img.resize((64,64))
+            img = np.array(img,dtype=np.float32)
+            dataset.append(img)
+    dataset = np.array(dataset)
+    
+    dcgan.train(dataset,100)
 
 
-        
 
