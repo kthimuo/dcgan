@@ -161,6 +161,37 @@ class DCGAN:
                 )
         return discriminator
 
+    @classmethod
+    def discriminator_loss(real_output, fake_output):
+        real_loss = cross_entropy(tf.ones_like(real_output), real_output)
+        fake_loss = cross_entropy(tf.zeros_like(fake_output), fake_output)
+        total_loss = real_loss + fake_loss
+        return total_loss
+
+    @classmethod
+    def generator_loss(fake_output):
+        return cross_entropy(tf.ones_like(fake_output), fake_output)
+
+    def train(self,images,epochs):
+        dis_opt = tf.keras.optimizer.Adam(1e-4)
+        gen_opt = tf.keras.optimizer.Adam(1e-4)
+        for epoch in epochs:
+            batch = np.random.choice(dataset.shape[0],self.batch_size)
+            batch_images = images[batch]
+            noise = np.random.uniform(-1,1,[self.batch_size,100])
+            generated_image = self.generator(noise)
+            
+            fake_output = self.discriminator(generated_image)
+            real_output = self.discriminator(batch_images)
+            
+            dis_loss = discriminator_loss(real_output, fake_output)
+            gen_loss = generator_loss(fake_output)
+
+            dis_opt.minimize(dis_loss)
+
+
+            
+
 if __name__ == '__main__':
     batch_size = 128
     n_noise = 100
