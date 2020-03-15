@@ -2,3 +2,7 @@
 /fruits/*
 /skech/*
 /skechs/*
+dcgan_mnist.py
+generate_fruits.py
+mnist.py
+model.py
