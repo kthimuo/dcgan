@@ -207,7 +207,8 @@ class DCGAN:
                 noise_sample = np.random.uniform(-1,1,[1,100])
                 generated_image = self.generator(noise_sample)
                 generated_image = generated_image.numpy()[0]
-                generated_image = Image.fromarray(generated_image.astype(np.uint8))
+                generated_image = Image.fromarray(((127.5+generated_image) * 127.5).astype(np.uint8))
+#                generated_image = Image.fromarray(generated_image.astype(np.uint8))
 
                 try :
                     os.mkdir('generated_image')
