@@ -221,7 +221,6 @@ if __name__ == '__main__':
     batch_size = 128
     n_noise = 100
     dcgan = DCGAN(batch_size, n_noise)
-#
     dataset = []
     import sys,os
     from PIL import Image    
